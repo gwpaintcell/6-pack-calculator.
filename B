@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paint Pallet Calculator</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+.container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+label { font-weight: bold; display: block; margin-top: 10px; }
+input { width: 100%; padding: 8px; margin: 5px 0 10px; box-sizing: border-box; }
+button { background: #007bff; color: #fff; padding: 10px; border: none; width: 100%; cursor: pointer; font-size: 16px; }
+button:hover { background: #0056b3; }
+.result { margin-top: 15px; background: #e9ecef; padding: 10px; border-radius: 5px; font-size: 16px; white-space: pre-line; }
+.result h3 { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>Paint Pallet Calculator</h2>
+
+<label for="layers">Full Layers Completed:</label>
+<input type="number" id="layers" min="0" value="0" />
+
+<label for="trays">Extra Trays Completed:</label>
+<input type="number" id="trays" min="0" value="0" />
+
+<label for="packs">Individual 6-Packs:</label>
+<input type="number" id="packs" min="0" value="0" />
+
+<hr />
+<h3>Subtract Previous Shift (Optional)</h3>
+
+<label for="prevLayers">Previous Shift Full Layers:</label>
+<input type="number" id="prevLayers" min="0" value="0" />
+
+<label for="prevTrays">Previous Shift Extra Trays:</label>
+<input type="number" id="prevTrays" min="0" value="0" />
+
+<label for="prevPacks">Previous Shift Individual 6-Packs:</label>
+<input type="number" id="prevPacks" min="0" value="0" />
+
+<button id="calcBtn" onclick="calculateTotals()">Calculate Totals</button>
+
+<div class="result" id="worksOrderResult"></div>
+<div class="result" id="recordSheetResult"></div>
+</div>
+
+<script>
+function calculateTotals() {
+var packsPerTray = 42;
+var traysPerLayer = 7;
+
+var layers = parseInt(document.getElementById('layers').value, 10);
+if (isNaN(layers) || layers < 0) layers = 0;
+
+var extraTrays = parseInt(document.getElementById('trays').value, 10);
+if (isNaN(extraTrays) || extraTrays < 0) extraTrays = 0;
+
+var packs = parseInt(document.getElementById('packs').value, 10);
+if (isNaN(packs) || packs < 0) packs = 0;
+
+var prevLayers = parseInt(document.getElementById('prevLayers').value, 10);
+if (isNaN(prevLayers) || prevLayers < 0) prevLayers = 0;
+
+var prevTrays = parseInt(document.getElementById('prevTrays').value, 10);
+if (isNaN(prevTrays) || prevTrays < 0) prevTrays = 0;
+
+var prevPacks = parseInt(document.getElementById('prevPacks').value, 10);
+if (isNaN(prevPacks) || prevPacks < 0) prevPacks = 0;
+
+var totalPacks = (layers * traysPerLayer * packsPerTray) + (extraTrays * packsPerTray) + packs;
+var prevTotalPacks = (prevLayers * traysPerLayer * packsPerTray) + (prevTrays * packsPerTray) + prevPacks;
+
+var worksOrderTrays = (layers * traysPerLayer) + extraTrays;
+var worksOrderPacks = totalPacks;
+
+var netPacks = totalPacks - prevTotalPacks;
+if (netPacks < 0) netPacks = 0;
+
+var netTrays = Math.floor(netPacks / packsPerTray);
+var netLayers = Math.floor(netTrays / traysPerLayer);
+var loosePacks = netPacks % packsPerTray;
+var totalPots = netPacks * 6;
+
+var worksOrderText = "Works Order Sheet:\n" +
+"Total Trays Completed: " + worksOrderTrays + "\n" +
+"Total 6-Packs Completed: " + worksOrderPacks;
+
+var recordSheetText = "Record Sheet (after subtracting previous shift):\n" +
+"Full Layers: " + netLayers + "\n" +
+"Total Trays: " + netTrays + "\n" +
+"Loose 6-Packs: " + loosePacks + "\n" +
+"Total 6-Packs: " + netPacks + "\n" +
+"Total Pots: " + totalPots;
+
+document.getElementById('worksOrderResult').textContent = worksOrderText;
+document.getElementById('recordSheetResult').textContent = recordSheetText;
+}
+</script>
+
+</body>
+</html>
